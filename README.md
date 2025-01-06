@@ -6,6 +6,7 @@ If you find this content helpful. please Subsribe like, and share
 
 Simple Tutorial ❗️
 First in VPS setup :
+
 sudo apt update && sudo apt upgrade -y
 
 sudo curl -s https://download.hyper.space/api/install | bash
