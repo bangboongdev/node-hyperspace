@@ -20,5 +20,22 @@ First in VPS setup :
 * bash space.sh
 
 
+# Update dan upgrade sistem
+sudo apt update && sudo apt upgrade -y
+
+# Install HyperSpace
+sudo curl -s https://download.hyper.space/api/install | bash
+
+# Reload .bashrc
+source /root/.bashrc
+
+# Clone repository Node Hyperspace
+git clone https://github.com/shareithub/node-hyperspace.git
+
+# Reload .bashrc lagi setelah cloning
+source /root/.bashrc
+
+# Jalankan script space.sh
+bash space.sh
 
  and follow the steps on the bot
