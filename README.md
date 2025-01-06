@@ -7,18 +7,18 @@ If you find this content helpful. please Subsribe like, and share
 Simple Tutorial ❗️
 First in VPS setup :
 
-sudo apt update && sudo apt upgrade -y
+* sudo apt update && sudo apt upgrade -y
 
-sudo curl -s https://download.hyper.space/api/install | bash
+* sudo curl -s https://download.hyper.space/api/install | bash
 
-source /root/.bashrc
+* source /root/.bashrc
 
-git clone https://github.com/shareithub/node-hyperspace.git
+* git clone https://github.com/shareithub/node-hyperspace.git
 
-source /root/.bashrc
+* source /root/.bashrc
 
-bash space.sh
+* bash space.sh
 
 
 
-* and follow the steps on the bot
+ and follow the steps on the bot
