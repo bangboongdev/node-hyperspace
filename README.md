@@ -2,6 +2,8 @@
 
 ⚠️ Youtube Channel  : [SHARE IT HUB](https://www.youtube.com/channel/UCUvH2S-T6T_hc7DjxhVd28A)
 
+⚠️ Tutorial by VIDEO : [https://youtu.be/WDCpcAoUmAY
+
 If you find this content helpful. please Subsribe like, and share
 
 # Simple Tutorial ❗️
