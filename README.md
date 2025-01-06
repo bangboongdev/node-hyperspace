@@ -20,4 +20,5 @@ source /root/.bashrc
 bash space.sh
 
 
-and follow the steps on the bot
+
+* and follow the steps on the bot
