@@ -1,16 +1,16 @@
-echo "   ______ _____   ___  ____  __________  __ ____  _____ "
-echo "  / __/ // / _ | / _ \/ __/ /  _/_  __/ / // / / / / _ )"
-echo " _\ \/ _  / __ |/ , _/ _/  _/ /  / /   / _  / /_/ / _  |"
-echo "/___/_//_/_/ |_/_/|_/___/ /___/ /_/   /_//_/\____/____/ "
-echo "               SUBSCRIBE MY CHANNEL                     "
+#!/bin/bash
+
+# Hiển thị tiêu đề
+clear
+echo "               ĐĂNG KÝ KÊNH CỦA TÔI                     "
 
 sleep 1
 
-echo " Menghentikan aios-cli yang sedang berjalan agar tidak terjadi error "
+echo "Đang dừng aios-cli đang chạy để tránh lỗi..."
 aios-cli kill
 sleep 1
 
-echo "Menampilkan daftar screen yang ada..."
+echo "Hiển thị danh sách các screen hiện có..."
 screen -ls | grep -o '[0-9]*\.' | nl -s '. ' | while read line; do
     screen_id=$(echo $line | awk '{print $2}')
     screen_name=$(screen -ls | grep -E "^\s*$screen_id" | awk -F. '{print $2}')
@@ -18,9 +18,9 @@ screen -ls | grep -o '[0-9]*\.' | nl -s '. ' | while read line; do
 done
 sleep 1
 
-read -p "Apakah Anda ingin menghapus screen yang ada? (y/n): " delete_choice
+read -p "Bạn có muốn xóa các screen hiện có không? (y/n): " delete_choice
 if [[ "$delete_choice" == "y" || "$delete_choice" == "Y" ]]; then
-    read -p "Masukkan nomor urut screen yang ingin dihapus (pisahkan dengan koma jika lebih dari 1): " screens_to_delete
+    read -p "Nhập số thứ tự của screen cần xóa (cách nhau bằng dấu phẩy nếu nhiều): " screens_to_delete
     IFS=',' read -ra screens_array <<< "$screens_to_delete"
     
     for screen_number in "${screens_array[@]}"; do
@@ -30,145 +30,140 @@ if [[ "$delete_choice" == "y" || "$delete_choice" == "Y" ]]; then
         screen_name=$(screen -ls | grep -E "^\s*$screen_id" | awk -F. '{print $2}')
         
         if [ -n "$screen_id" ]; then
-            echo "Menghapus screen '$screen_name' dengan ID '$screen_id'..."
+            echo "Đang xóa screen '$screen_name' với ID '$screen_id'..."
             screen -S "$screen_id" -X quit
-            echo "Screen '$screen_name' berhasil dihapus."
+            echo "Screen '$screen_name' đã được xóa thành công."
         else
-            echo "[ERROR] Screen dengan nomor urut '$screen_number' tidak ditemukan."
+            echo "[LỖI] Không tìm thấy screen với số thứ tự '$screen_number'."
         fi
     done
 fi
 
 sleep 2
 
-read -p "Apakah Anda ingin menghapus model yang ada sebelumnya? (y/n): " delete_model_choice
+read -p "Bạn có muốn xóa các model đã tải trước đó không? (y/n): " delete_model_choice
 if [[ "$delete_model_choice" == "y" || "$delete_model_choice" == "Y" ]]; then
-    echo "Menghapus model yang ada sebelumnya..."
+    echo "Đang xóa các model đã tải trước đó..."
     rm -rf /root/.cache/hyperspace/models/*
     sleep 1
 fi
 
-read -p "Apakah Anda ingin memasukkan private key sekarang? (y/n): " choice
+read -p "Bạn có muốn nhập private key bây giờ không? (y/n): " choice
 if [ "$choice" = "y" ] || [ "$choice" = "Y" ]; then
-    echo "Masukkan private key Anda (Lalu ENTER dan setelahnya tekan dengan CTRL+D):"
+    echo "Nhập private key của bạn (nhấn ENTER và sau đó nhấn CTRL+D):"
     cat > .pem
 else
-    echo "Langkah ini dilewati."
+    echo "Bỏ qua bước này."
 fi
 
 clear
 
-read -p "Masukkan nama screen: " screen_name
+read -p "Nhập tên cho screen: " screen_name
 
 if [[ -z "$screen_name" ]]; then
-    echo "Nama screen tidak boleh kosong."
+    echo "Tên screen không được để trống."
     exit 1
 fi
 
-echo "Membuat sesi screen dengan nama '$screen_name'..."
+echo "Tạo phiên screen với tên '$screen_name'..."
 screen -S "$screen_name" -dm
-echo "[INFO] Sesi screen '$screen_name' dibuat."
+echo "[THÔNG TIN] Phiên screen '$screen_name' đã được tạo."
 
-echo "Menjalankan perintah 'aios-cli start' di dalam sesi screen '$screen_name'..."
+echo "Chạy lệnh 'aios-cli start' trong phiên screen '$screen_name'..."
 screen -S "$screen_name" -X stuff "aios-cli start\n"
 
 sleep 1
 
-echo "Keluar dari sesi screen '$screen_name'..."
+echo "Thoát khỏi phiên screen '$screen_name'..."
 screen -S "$screen_name" -X detach
 sleep 1
 
 if [[ $? -eq 0 ]]; then
-    echo "[SUCCESS] Screen dengan nama '$screen_name' berhasil dibuat dan menjalankan perintah aios-cli start."
+    echo "[THÀNH CÔNG] Screen '$screen_name' đã được tạo và chạy lệnh aios-cli start."
 else
-    echo "[ERROR] Gagal membuat screen."
+    echo "[LỖI] Không thể tạo screen."
     exit 1
 fi
 
 sleep 2
 
-read -p "Apakah Anda ingin mengunduh model baru? (y/n): " download_model_choice
+read -p "Bạn có muốn tải model mới không? (y/n): " download_model_choice
 if [[ "$download_model_choice" == "y" || "$download_model_choice" == "Y" ]]; then
-    echo "Menambahkan model dengan perintah aios-cli models add..."
+    echo "Đang thêm model với lệnh aios-cli models add..."
     url="https://huggingface.com/afrideva/Tiny-Vicuna-1B-GGUF/resolve/main/tiny-vicuna-1b.q8_0.gguf"
     model_folder="/root/.cache/hyperspace/models/hf__afrideva___Tiny-Vicuna-1B-GGUF__tiny-vicuna-1b.q8_0.gguf"
     model_path="$model_folder/tiny-vicuna-1b.q8_0.gguf"
 
     if [[ ! -d "$model_folder" ]]; then
-        echo "Folder tidak ditemukan, membuat folder $model_folder..."
+        echo "Thư mục không tồn tại, tạo thư mục $model_folder..."
         mkdir -p "$model_folder"
     else
-        echo "Folder sudah ada, melanjutkan..."
+        echo "Thư mục đã tồn tại, tiếp tục..."
     fi
 
     if [[ ! -f "$model_path" ]]; then
-        echo "Mengunduh model dari $url..."
+        echo "Đang tải model từ $url..."
         wget -q --show-progress "$url" -O "$model_path"
         if [[ -f "$model_path" ]]; then
-            echo "[SUCCESS] Model berhasil diunduh dan disimpan di $model_path!"
+            echo "[THÀNH CÔNG] Model đã được tải và lưu tại $model_path!"
         else
-            echo "[ERROR] Terjadi kesalahan saat mengunduh model."
+            echo "[LỖI] Có lỗi xảy ra khi tải model."
         fi
     else
-        echo "[INFO] Model sudah ada di $model_path, melewati proses pengunduhan."
+        echo "[THÔNG TIN] Model đã tồn tại tại $model_path, bỏ qua tải."
     fi
 else
-    echo "[INFO] Langkah pengunduhan model dilewati."
+    echo "[THÔNG TIN] Bỏ qua bước tải model."
 fi
 
-echo "[SUCCESS] Model berhasil ditambahkan!"
-# ORIGINAL SOURCE BY SHARE IT HUB
-echo "Tunggu sampai proses selesai ! - Original Scripts by SHARE IT HUB"
-read -p "Apakah Anda ingin menjalankan inferensi? (y/n): " user_choice
+echo "[THÀNH CÔNG] Model đã được thêm!"
+echo "Đợi đến khi hoàn tất!"
+read -p "Bạn có muốn chạy inferencing? (y/n): " user_choice
 
 if [[ "$user_choice" == "y" || "$user_choice" == "Y" ]]; then
-    echo "Tunggu sampai proses selesai ! - Original Scripts by SHARE IT HUB"
-    infer_prompt="What is SHARE IT HUB ? Describe the airdrop community"
-    echo "[INFO] Proses inferensi dimulai... Mengirim prompt: '$infer_prompt'"
+    infer_prompt="SHARE IT HUB là gì? Mô tả cộng đồng airdrop."
+    echo "[THÔNG TIN] Bắt đầu inferencing với prompt: '$infer_prompt'"
     if aios-cli infer --model hf:afrideva/Tiny-Vicuna-1B-GGUF:tiny-vicuna-1b.q8_0.gguf --prompt "$infer_prompt"; then
-        echo "[SUCCESS] Inferensi berhasil."
+        echo "[THÀNH CÔNG] Inferencing hoàn tất."
     else
-        echo "[ERROR] Terjadi kesalahan saat menjalankan inferensi."
+        echo "[LỖI] Có lỗi xảy ra khi inferencing."
     fi
 else
-    echo "[INFO] Langkah inferensi dilewati."
+    echo "[THÔNG TIN] Bỏ qua bước inferencing."
 fi
 
-echo "Menjalankan perintah import-keys dengan file.pem..."
+echo "Chạy lệnh import-keys với file .pem..."
 aios-cli hive import-keys ./.pem
 
 sleep 1
 
-echo "Memulai perintah Hive Login"
+echo "Đăng nhập Hive..."
 aios-cli hive login
 sleep 1
 
-echo "Memulai perintah Menggunakan Tier 5"
+echo "Sử dụng Tier 5..."
 aios-cli hive select-tier 5
 sleep 1
 
-echo "Memulai perintah Hive Connect"
+echo "Kết nối Hive..."
 aios-cli hive connect
 sleep 1
 
-read -p "Apakah Anda ingin menjalankan inferensi Hive? (y/n): " hive_choice
+read -p "Bạn có muốn chạy Hive inferencing không? (y/n): " hive_choice
 
 if [[ "$hive_choice" == "y" || "$hive_choice" == "Y" ]]; then
-    infer_prompt="What is SHARE IT HUB ? Describe the airdrop community"
-    echo "[INFO] Jangan lupa untuk  Subscribe Channel Youtube dan Telegram : SHARE IT HUB"
+    infer_prompt="SHARE IT HUB là gì? Mô tả cộng đồng airdrop."
+    echo "[THÔNG TIN] Đừng quên đăng ký kênh YouTube và Telegram: SHARE IT HUB."
     if aios-cli hive infer --model hf:afrideva/Tiny-Vicuna-1B-GGUF:tiny-vicuna-1b.q8_0.gguf --prompt "$infer_prompt"; then
-        echo "[SUCCESS] Hive Inferensi berhasil."
+        echo "[THÀNH CÔNG] Hive Inferencing hoàn tất."
     else
-        echo "[ERROR] Terjadi kesalahan saat menjalankan inferensi Hive."
+        echo "[LỖI] Có lỗi xảy ra khi Hive Inferencing."
     fi
 else
-    echo "[INFO] Langkah Hive inferensi dilewati."
+    echo "[THÔNG TIN] Bỏ qua bước Hive Inferencing."
 fi
 
 sleep 1
 
-echo "Memulai Menghentikan aios-cli & Menghubungkan ulang "
-screen -S "$screen_name" -X stuff "aios-cli start --connect\n"
-
-echo "[INFO] Proses selesai."
-echo "DONE. JIKA KALIAN INGIN CHECK GUNAKAN PERINTAH : screen -r \"$screen_name\""
+echo "Đang khởi động lại aios-cli và kết nối lại..."
+screen -S "$screen_name" -X stuff "aios-cli start
